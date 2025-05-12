@@ -8,7 +8,6 @@ class BadgeSerializer(serializers.ModelSerializer):
         model = Badge
         fields = ['id', 'name', 'description', 'icon']
 
-
 class UserBadgeSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     badge = BadgeSerializer(read_only=True)
