@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from users import serializers
+from users.serializers import UserSerializer
 from .models import Group, GroupMembership, GroupInvitation  # Import GroupMembership here
 from .serializers import GroupSerializer, GroupMembershipSerializer, GroupInvitationSerializer
 from django.contrib.auth import get_user_model
@@ -118,3 +119,12 @@ class UserInvitationsListView(generics.ListAPIView):
             recipient=self.request.user,
             status='PENDING'
         )
+
+
+class GroupMembersListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        group_id = self.kwargs['group_id']
+        return User.objects.filter(group_memberships__group__id=group_id)
