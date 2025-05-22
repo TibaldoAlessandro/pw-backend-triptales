@@ -3,22 +3,18 @@ from .models import Photo
 from posts.models import Post
 
 class PhotoSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
     post_id = serializers.PrimaryKeyRelatedField(
         queryset=Post.objects.all(),
         write_only=True,
         source='post'
     )
-    image_url = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Photo
-        fields = ['id', 'image', 'image_url', 'post_id', 'latitude', 'longitude', 'created_at']
-        extra_kwargs = {
-            'image': {'write_only': True}
-        }
+        fields = ['id', 'image', 'post_id', 'latitude', 'longitude', 'created_at']
 
-    def get_image_url(self, obj):
+    def get_image(self, obj):
         """Restituisce l'URL completo dell'immagine"""
         if obj.image:
             request = self.context.get('request')
@@ -27,9 +23,7 @@ class PhotoSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
-    def to_representation(self, instance):
-        """Personalizza la rappresentazione dell'output"""
-        data = super().to_representation(instance)
-        # Sostituisci il campo 'image' con 'image_url' nell'output
-        data['image'] = data.pop('image_url')
-        return data
+    def create(self, validated_data):
+        """Override del metodo create per gestire l'upload dell'immagine"""
+        # Rimuovi image dal metodo create dato che è read-only
+        return super().create(validated_data)

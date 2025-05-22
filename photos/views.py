@@ -38,18 +38,19 @@ class PhotoCreateView(generics.CreateAPIView):
             return Response({'error': 'Invalid post ID'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Prepara i dati per il serializer
-        data = {
-            'post_id': post_id,
+        # Crea direttamente l'oggetto Photo
+        photo_data = {
+            'post': post,
             'image': request.FILES['image'],
-            'latitude': request.POST.get('latitude'),
-            'longitude': request.POST.get('longitude'),
+            'latitude': float(request.POST['latitude']) if request.POST.get('latitude') else None,
+            'longitude': float(request.POST['longitude']) if request.POST.get('longitude') else None,
         }
 
-        serializer = self.get_serializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            print(f"Serializer errors: {serializer.errors}")
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Filtra i valori None
+        photo_data = {k: v for k, v in photo_data.items() if v is not None}
+
+        photo = Photo.objects.create(**photo_data)
+
+        # Usa il serializer per la risposta
+        serializer = self.get_serializer(photo)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
