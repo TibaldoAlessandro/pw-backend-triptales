@@ -14,8 +14,9 @@ class PostListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Ottieni il group_id dal payload
+        print(f"Request data: {self.request.data}")
         group_id = self.request.data.get('group_id')
+        print(f"Group ID extracted: {group_id}")
 
         if not group_id:
             return Response({'error': 'group_id is required'},
