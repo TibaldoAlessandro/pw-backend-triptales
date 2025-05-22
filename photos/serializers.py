@@ -15,12 +15,9 @@ class PhotoSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'post_id', 'latitude', 'longitude', 'created_at']
 
     def get_image(self, obj):
-        """Restituisce l'URL completo dell'immagine"""
-        if obj.image:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
         return None
 
     def create(self, validated_data):

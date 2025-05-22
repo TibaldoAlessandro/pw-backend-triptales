@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.response import Response
 from .models import Post, Like
 from photos.models import Photo
 from comments.models import Comment
@@ -52,3 +53,8 @@ class PostSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.likes.filter(author=request.user).exists()
         return False
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = PostSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)

@@ -51,6 +51,10 @@ class PhotoCreateView(generics.CreateAPIView):
 
         photo = Photo.objects.create(**photo_data)
 
+        # Debug: verifica il percorso assoluto del file
+        print(f"Image saved at: {photo.image.path}")
+        print(f"Image URL: {photo.image.url}")
+
         # Usa il serializer per la risposta
-        serializer = self.get_serializer(photo)
+        serializer = PhotoSerializer(photo, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
