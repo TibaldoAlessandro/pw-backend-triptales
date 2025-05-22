@@ -1,11 +1,10 @@
 from rest_framework import serializers
-
-from rest_framework import serializers
 from .models import Post, Like
 from photos.models import Photo
 from comments.models import Comment
 from users.serializers import UserSerializer
 from groups.serializers import GroupSerializer
+from groups.models import Group
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -39,10 +38,18 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     user_has_liked = serializers.SerializerMethodField()
 
+    # Campo per ricevere group_id in input
+    group_id = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(),
+        write_only=True,
+        source='group',
+        required=False  # Sarà gestito nella view
+    )
+
     class Meta:
         model = Post
         fields = [
-            'id', 'author', 'group', 'text', 'created_at',
+            'id', 'author', 'group', 'group_id', 'text', 'created_at',
             'photos', 'likes', 'comments', 'likes_count', 'user_has_liked'
         ]
 
