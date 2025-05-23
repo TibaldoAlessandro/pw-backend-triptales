@@ -66,3 +66,24 @@ def toggle_like(request, post_id):
     except Post.DoesNotExist:
         return Response({'error': 'Post not found'},
                         status=status.HTTP_404_NOT_FOUND)
+
+
+class AllPostsListView(generics.ListAPIView):
+    """
+    Vista per ottenere tutti i post con foto geotaggate
+    Utilizzata dalla mappa per mostrare tutte le foto nel mondo
+    """
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Restituisce solo i post che hanno almeno una foto con coordinate
+        return Post.objects.filter(
+            photos__latitude__isnull=False,
+            photos__longitude__isnull=False
+        ).distinct().order_by('-created_at')
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
