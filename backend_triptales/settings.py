@@ -39,7 +39,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://centrally-innocent-walrus.ngrok-free.app",
+    "http://pjwrossi5.duckdns.org",
 ]
 
 ROOT_URLCONF = 'backend_triptales.urls'
@@ -66,8 +66,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'pwtriptales_db',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'PASSWORD': 'rootroot',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
